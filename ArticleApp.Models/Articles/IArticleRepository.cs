@@ -14,7 +14,7 @@ namespace ArticleApp.Models.Articles
 
         Task<Article> GetArticleByIdAsync(int id);           //Detail
 
-        Task<Article> EditArticleAsync(Article article);     // Edit
+        Task<Article> EditArticleAsync(Article model);     // Edit
 
         Task DeleteArticleAsync(int id);                    //Delete
 

@@ -1,4 +1,6 @@
-﻿using Dul.Domain.Common;
+﻿using Dul.Board;
+using Dul.Domain.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArticleApp.Models.Articles
 {
@@ -8,34 +10,62 @@ namespace ArticleApp.Models.Articles
     /// </summary>
     public class ArticleRepository : IArticleRepository
     {
-        public Task<Article> AddArticleAsync(Article article)
+        ArticleAppDBContext _context;
+        public ArticleRepository(ArticleAppDBContext context)
         {
-            throw new NotImplementedException();
+            this._context = context;        
         }
 
-        public Task DeleteArticleAsync(int id)
+        // Add 입역
+        public async Task<Article> AddArticleAsync(Article model)
         {
-            throw new NotImplementedException();
+            _context.Articles.Add(model);
+            await _context.SaveChangesAsync();
+            return model;
         }
 
-        public Task<Article> EditArticleAsync(Article article)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<PagingResult<Article>> GetAllAsync(int pageindex, int pagesize)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Article> GetArticleByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
+        //출력
         public Task<List<Article>> GetArticlesAsync()
         {
-            throw new NotImplementedException();
+            return _context.Articles.OrderByDescending(a=>a.Id).ToListAsync();
         }
+
+        //상세보기
+        public async Task<Article> GetArticleByIdAsync(int id)
+        {
+            return await _context.Articles.Where(a => a.Id == id).SingleOrDefaultAsync();
+            //return await _context.Articles.FindAsync(id);
+        }
+
+        // 페이징
+        public async Task<PagingResult<Article>> GetAllAsync(int pageindex, int pagesize)
+        {
+            //페이징부터 가져오기
+            var totalRecords = await _context.Articles.CountAsync();
+            var articles = await _context.Articles
+                .OrderByDescending(x => x.Id)
+                .Skip(pageindex*pagesize)
+                .Take(pagesize)
+                .ToListAsync();
+            return new PagingResult<Article>(articles, totalRecords);
+        }
+        public async Task<Article> EditArticleAsync(Article model)
+        {
+            _context.Entry(model).State= EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return model;
+        }
+
+        public async Task DeleteArticleAsync(int id)
+        {
+            //var model = await _context.Articles.FindAsync(id);
+            var model = await _context.Articles.Where(m => m.Id == id).SingleOrDefaultAsync();
+            if ( model != null )
+            {
+                _context.Articles.Remove(model);
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }
