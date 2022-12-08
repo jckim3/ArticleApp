@@ -87,7 +87,6 @@ namespace ArticleApp.Models.Test
 
                 var models = await repository.GetArticlesAsync();
                 Assert.AreEqual(2, models.Count);
-
             }
 
         }
