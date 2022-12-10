@@ -1,8 +1,10 @@
 ﻿// C:\Users\jckim\.nuget\packages\microsoft.entityframeworkcore.inmemory\7.0.0\ 설치
 // C:\Users\jckim\.nuget\packages\microsoft.entityframeworkcore.sqlserver\7.0.0\ 설치
 using ArticleApp.Models.Articles;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Reflection;
 using System.Reflection.Metadata;
 
@@ -15,7 +17,10 @@ namespace ArticleApp.Models.Test
         public async Task ArticleRepositoryAllMethodTest()
         {
             var options = new DbContextOptionsBuilder<ArticleAppDBContext>()
-                .UseInMemoryDatabase(databaseName: "ArticleApp")
+                //.UseInMemoryDatabase(databaseName: "ArticleApp")
+                //.UseSqlServer("Data Source=JCDESKTOP\\SQLEXPRESS;Database=ArticleApp;Trusted_Connection=True;User ID=sa;Password=32355;MultipleActiveResultSets=true")
+                //.UseSqlServer("Data Source=JCDESKTOP\\SQLEXPRESS;Persist Security Info=False;User ID=sa;password=32355;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False")
+                .UseSqlServer("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Articles; Integrated Security = True; Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False")
                 .Options;
 
             // AddAsync() Method Test

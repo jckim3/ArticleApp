@@ -1,5 +1,7 @@
-using ArticleApp.Areas.Identity;
+﻿using ArticleApp.Areas.Identity;
 using ArticleApp.Data;
+using ArticleApp.Models;
+using ArticleApp.Models.Articles;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -20,6 +22,15 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 builder.Services.AddSingleton<WeatherForecastService>();
+
+// 종속성 주입
+// ArticleAppDBContext.cs inject, New DB Context Add
+builder.Services.AddEntityFrameworkSqlServer().AddDbContext<ArticleAppDBContext>(options=>
+    options.UseSqlServer(connectionString));
+
+// IArticleAppDBContext.cs inject DI Container 에 서비스 등록
+builder.Services.AddTransient<IArticleRepository, ArticleRepository>();
+
 
 var app = builder.Build();
 
