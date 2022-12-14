@@ -20,5 +20,8 @@ namespace ArticleApp.Models.Articles
         //[Required]
         [Required(ErrorMessage ="Please Enter the Title, It should not be empty!!")]
         public string Title { get; set; }
+
+        [Required(ErrorMessage = "Please Enter the Content, It should not be empty!!")]
+        public string Content { get; set; }
     }
 }
