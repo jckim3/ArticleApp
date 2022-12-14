@@ -1,7 +1,39 @@
 ﻿@page "/Articles/Create"
+@using ArticleApp.Models.Articles;
 
+@*// 네비게이션메니저를 네비게이션메니져로 인젝션 한다. *@
+@inject NavigationManager NavigationManager
+
+@*저장하는 로직*@
+@inject IArticleRepository ArticleRepository
 <h3>Create</h3>
 
-@code {
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <EditForm Model="Model" OnValidSubmit="btnSubmit_Click">
+                <DataAnnotationsValidator></DataAnnotationsValidator>
+                <div class="form-group">
+                    <label for="Title">Title</label>
+                    <InputText id="Title" class="form-control" placeholder="Enter Title" @bind-Value="@Model.Title"></InputText>
+                    <ValidationMessage For="@(()=>Model.Title)" class="form-text text-muted"></ValidationMessage>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <a href="/Articles" class="btn btn-secondary"> List </a>
+            </EditForm>
+        </div>
 
+    </div>
+</div>
+
+@code {
+    public Article Model { get; set; } = new Article();
+
+    protected async Task  btnSubmit_Click()
+    {
+        // 저장로직
+        await ArticleRepository.AddArticleAsync(Model);
+        // 리스트 페이지로 이동
+        NavigationManager.NavigateTo("/Articles");
+    }
 }

@@ -7,7 +7,6 @@ namespace ArticleApp.Models.Articles
     /// Artical Model Class : Articles table 1:1 mapping
     /// </summary>
     public class Article : AuditableBase
-
     {
         /// <summary>
         /// Id
@@ -17,7 +16,9 @@ namespace ArticleApp.Models.Articles
         /// Title
         /// </summary>
 
-        [Required]
+        // 유효성 검사
+        //[Required]
+        [Required(ErrorMessage ="Please Enter the Title, It should not be empty!!")]
         public string Title { get; set; }
     }
 }
