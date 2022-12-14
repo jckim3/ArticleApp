@@ -1,7 +1,39 @@
-﻿@page "/Articles/Details/{Id}"
+﻿@page "/Articles/Details/{Id:int}"
+@using ArticleApp.Models.Articles;
+
+@*저장하는 로직*@
+@inject IArticleRepository ArticleRepository
+
 <h3>Details</h3>
+<hr />
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="Id">ID: </label>@Model.Id
+            </div>
+            <div class="form-group">
+                <label for="Title ">Title: </label>@Model.Title
+            </div>
+            <div class="form-group">
+                <a href="/Articles/Edit/@Model.Id" class="btn btn-primary"> Edit </a>
+                <a href="/Articles/Delete/@Model.Id" class="btn btn-danger"> Delete </a>
+                <a href="/Articles" class="btn btn-secondary"> List </a>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 @code {
     [Parameter]
-    public string Id { get; set; }
+    public int Id { get; set; }
+
+    public Article Model { get; set; } = new Article();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await ArticleRepository.GetArticleByIdAsync(Id);
+    }
 }
