@@ -24,7 +24,7 @@
                 </div>
                 <div class="form-group">
                     <label for="Content">Content</label>
-                    <InputText id="Content" class="form-control" placeholder="Enter Content" @bind-Value="@Model.Content"></InputText>
+                    <InputTextArea id="Content" class="form-control" placeholder="Enter Content" @bind-Value="@Model.Content"></InputTextArea>
                     <ValidationMessage For="@(()=>Model.Content)" class="form-text text-muted"></ValidationMessage>
                 </div>
                 <div class="form-group">

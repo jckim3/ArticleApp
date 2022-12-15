@@ -1,7 +1,64 @@
 ﻿@page "/Articles/Delete/{Id:int}"
+@using ArticleApp.Models.Articles;
+
+@*저장하는 로직*@
+@inject IArticleRepository ArticleRepository
+@inject NavigationManager NavigatorManager
+
+@inject IJSRuntime JSRuntime
+
+
 <h3>Delete</h3>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="Id">ID: </label>@Model.Id
+            </div>
+            <div class="form-group">
+                <label for="Title ">Title: </label>@Model.Title
+            </div>
+            <div class="form-group">
+                <label for="Content">Content: </label>
+                <hr />
+                @Model.Content
+            </div>
+            <div class="form-group">
+                <a href="/Articles/Delete/@Model.Id" class="btn btn-danger" @onclick="btnDelete_Click"> Delete </a>
+                <a href="/Articles/Details/@Model.Id" class="btn btn-primary"> Cancel </a>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
     [Parameter]
     public int Id { get; set; }
+
+    public Article Model { get; set; } = new Article();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await ArticleRepository.GetArticleByIdAsync(Id);
+    }
+
+    // task or void , event handler 
+    protected async void btnDelete_Click()
+    {
+        //window.confirm("")
+        bool IsDelete = await JSRuntime.InvokeAsync<bool>("confirm", "Do you want to delete really?");
+        if (IsDelete)
+        {
+            // 삭제될때 까지 대기해라.
+            await ArticleRepository.DeleteArticleAsync(Id);
+            NavigatorManager.NavigateTo("/Articles");  // goto Index page
+        }
+        else
+        {
+            //window.alert("")
+            await JSRuntime.InvokeAsync<object>("alert", "Canceled!!");
+        }
+
+    } 
 }
