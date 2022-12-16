@@ -1,5 +1,32 @@
-﻿<h3>ArticlePager</h3>
+﻿@using Dul.Web;
+<h3>ArticlePager</h3>
+
+<input type="button" value="1page" @onclick="@(()=>PagerButtonClicked(1))" />
+<input type="button" value="2page" @onclick="@(()=>PagerButtonClicked(2))" />
+<input type="button" value="3page" @onclick="@(()=>PagerButtonClicked(3))" />
 
 @code {
+    //부모로부터 모든 페이저 관련된 정보가 담김, PagerBase 개체 받음
+    [Parameter]
+    public PagerBase Model{ get; set; }
+
+    protected override Task OnParametersSetAsync()
+    {
+        Model.PageCount = Convert.ToInt32(Math.Ceiling(Model.RecordCount / (double)Model.PageSize));
+        return base.OnParametersSetAsync();
+    }
+
+    // Parent Event Call back, 
+    [Parameter]
+    public EventCallback<int> PageIndexChanged { get; set; }
+
+    //페이지 버튼 클릭할 때 현재 클릭한 페이지 번호를 받아서 부모에게 전달 
+    private void PagerButtonClicked(int pageNumber)
+    {
+        Model.PageNumber = pageNumber;
+        Model.PageIndex = pageNumber - 1;
+
+        PageIndexChanged.InvokeAsync(pageNumber - 1);
+    }
 
 }
