@@ -1,15 +1,89 @@
 ﻿@using Dul.Web;
 <h3>ArticlePager</h3>
 
-<input type="button" value="1page" @onclick="@(()=>PagerButtonClicked(1))" />
-<input type="button" value="2page" @onclick="@(()=>PagerButtonClicked(2))" />
-<input type="button" value="3page" @onclick="@(()=>PagerButtonClicked(3))" />
+<div class="d-flex">
+
+    <ul class="pagination pagination-sm mx-auto">
+        @if (Model.PageNumber == 1)
+        {
+            <li class="page-item">
+                <a class="page-link order-first btn disable"><span style="font-size:7pt">First</span></a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item">
+                <a class="page-link order-first btn" @onclick="@(()=>PagerButtonClicked(1))"><span style="font-size:7pt">First</span></a>
+            </li>
+        }
+        @*// Prev page*@
+        @if (Model.PageNumber > 1 )
+        {
+            int prev = Model.PageNumber - 1;
+            <li class="page-item">
+                <a class="page-link order-first btn" @onclick="@(()=>PagerButtonClicked(prev))"><span style="font-size:7pt">PREV</span></a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item">
+                <a class="page-link order-first btn disable"><span style="font-size:7pt">PREV</span></a>
+            </li>
+        }
+
+        <li>
+            <input type="button" value="1page" @onclick="@(()=>PagerButtonClicked(1))" />
+        </li>
+        <li>
+            <input type="button" value="2page" @onclick="@(()=>PagerButtonClicked(2))" />
+        </li>
+        <li>
+            <input type="button" value="3page" @onclick="@(()=>PagerButtonClicked(3))" />
+        </li>
+        @*// Next page*@
+        @if (Model.PageNumber < Model.PageCount )
+        {
+            int next = Model.PageNumber + 1;
+            <li class="page-item">
+                <a class="page-link order-first btn" @onclick="@(()=>PagerButtonClicked(next))"><span style="font-size:7pt">NEXT</span></a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item">
+                <a class="page-link order-first btn disable"><span style="font-size:7pt">NEXT</span></a>
+            </li>
+        }
+        @*// Last page*@
+        @if (Model.PageNumber != Model.PageCount)
+        {
+            <li class="page-item">
+                <a class="page-link order-first btn" @onclick="@(()=>PagerButtonClicked(Model.PageCount))"><span style="font-size:7pt">Last</span></a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item">
+                <a class="page-link order-first btn disable"><span style="font-size:7pt">Last</span></a>
+            </li>
+        }
+
+
+
+    </ul>
+@*  
+    <input type="button" value="2page" @onclick="@(()=>PagerButtonClicked(2))" />
+    <input type="button" value="3page" @onclick="@(()=>PagerButtonClicked(3))" />
+*@
+</div>
 
 @code {
     //부모로부터 모든 페이저 관련된 정보가 담김, PagerBase 개체 받음
     [Parameter]
     public PagerBase Model{ get; set; }
 
+    //Method invoked when the component has received parameters from 
+    // its parent in the render tree,
     protected override Task OnParametersSetAsync()
     {
         Model.PageCount = Convert.ToInt32(Math.Ceiling(Model.RecordCount / (double)Model.PageSize));
@@ -21,12 +95,11 @@
     public EventCallback<int> PageIndexChanged { get; set; }
 
     //페이지 버튼 클릭할 때 현재 클릭한 페이지 번호를 받아서 부모에게 전달 
+    // Pager Update
     private void PagerButtonClicked(int pageNumber)
     {
         Model.PageNumber = pageNumber;
         Model.PageIndex = pageNumber - 1;
-
         PageIndexChanged.InvokeAsync(pageNumber - 1);
     }
-
 }

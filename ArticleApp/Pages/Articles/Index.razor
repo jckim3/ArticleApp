@@ -8,7 +8,6 @@
 
 @using Dul.Domain.Common;
 @using Dul.Web;
-
 @using ArticleApp.Pages.Articles.Components
 
 <h3>Index</h3>
@@ -56,6 +55,11 @@ else
 <ArticlePager Model="pager" PageIndexChanged="PageIndexChanged">
 
 </ArticlePager>
+
+@*@pager.PageCount
+@pager.PageNumber
+@pager.PageIndex*@
+
 @code {
     // Pager basic value
     private PagerBase pager = new PagerBase()
