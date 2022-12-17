@@ -4,34 +4,51 @@
 <div class="d-flex">
 
     <ul class="pagination pagination-sm mx-auto">
+
+        @*// First*@
         @if (Model.PageNumber == 1)
         {
             <li class="page-item">
-                <a class="page-link order-first btn disable"><span style="font-size:7pt">First</span></a>
+                <a class="page-link first btn disable"><span style="font-size:7pt">First</span></a>
             </li>
         }
         else
         {
             <li class="page-item">
-                <a class="page-link order-first btn" @onclick="@(()=>PagerButtonClicked(1))"><span style="font-size:7pt">First</span></a>
+                <a class="page-link first btn" @onclick="@(()=>PagerButtonClicked(1))"><span style="font-size:7pt">First</span></a>
             </li>
         }
+        @*//Prev N Link*@
+        @if (Model.PageNumber <= Model.PageCount)
+        {
+            int prev = Model.PageIndex / (int)Model.PagerButtonCount * Model.PagerButtonCount;
+            <li class="page-item">
+                <a class="page-link next btn" @onclick="@(()=>PagerButtonClicked(prev))"><span style="font-size:7pt">-@Model.PagerButtonCount</span></a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item">
+                <a class="page-link next btn disable"><span style="font-size:7pt">-@Model.PagerButtonCount+</span></a>
+            </li>
+        }
+
         @*// Prev page*@
         @if (Model.PageNumber > 1 )
         {
             int prev = Model.PageNumber - 1;
             <li class="page-item">
-                <a class="page-link order-first btn" @onclick="@(()=>PagerButtonClicked(prev))"><span style="font-size:7pt">PREV</span></a>
+                <a class="page-link prev btn" @onclick="@(()=>PagerButtonClicked(prev))"><span style="font-size:7pt">PREV</span></a>
             </li>
         }
         else
         {
             <li class="page-item">
-                <a class="page-link order-first btn disable"><span style="font-size:7pt">PREV</span></a>
+                <a class="page-link prev btn disable"><span style="font-size:7pt">PREV</span></a>
             </li>
         }
 
-        <li>
+@*        <li>
             <input type="button" value="1page" @onclick="@(()=>PagerButtonClicked(1))" />
         </li>
         <li>
@@ -39,32 +56,79 @@
         </li>
         <li>
             <input type="button" value="3page" @onclick="@(()=>PagerButtonClicked(3))" />
-        </li>
+        </li>*@
+
+        @*// Display by number of page*@
+        @{
+            int i = 0;
+            int start = (Model.PageNumber - 1) / (int)Model.PagerButtonCount * Model.PagerButtonCount + 1;
+            int end = ((Model.PageNumber - 1) / (int)Model.PagerButtonCount + 1) * Model.PagerButtonCount;
+        }
+        
+        @for (i = start; i <= end; i++)
+        {
+            var currentnumber = i;
+            if( i > Model.PageCount)
+            {
+                break;
+            }
+            if ( i == Model.PageNumber)
+            {
+                <li class="page-item active">
+                    <a class="page-link current btn disable"><span style="font-size:7pt">@currentnumber</span></a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item">
+                    <a class="page-link current btn" @onclick="@(()=>PagerButtonClicked(@currentnumber))"><span style="font-size:7pt">@currentnumber</span></a>
+                </li>
+            }
+
+
+        }
+
         @*// Next page*@
         @if (Model.PageNumber < Model.PageCount )
         {
             int next = Model.PageNumber + 1;
             <li class="page-item">
-                <a class="page-link order-first btn" @onclick="@(()=>PagerButtonClicked(next))"><span style="font-size:7pt">NEXT</span></a>
+                <a class="page-link next btn" @onclick="@(()=>PagerButtonClicked(next))"><span style="font-size:7pt">NEXT</span></a>
             </li>
         }
         else
         {
             <li class="page-item">
-                <a class="page-link order-first btn disable"><span style="font-size:7pt">NEXT</span></a>
+                <a class="page-link next btn disable"><span style="font-size:7pt">NEXT</span></a>
             </li>
         }
+        @*//Next N Link*@
+        @if (i <= Model.PageCount)
+        {
+            int next = Model.PageIndex / (int)Model.PagerButtonCount * Model.PagerButtonCount + Model.PagerButtonCount + 1;
+            <li class="page-item">
+                <a class="page-link next btn" @onclick="@(()=>PagerButtonClicked(next))"><span style="font-size:7pt">@Model.PagerButtonCount+</span></a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item">
+                <a class="page-link next btn disable"><span style="font-size:7pt">@Model.PagerButtonCount+</span></a>
+            </li>
+        }
+
+
         @*// Last page*@
         @if (Model.PageNumber != Model.PageCount)
         {
             <li class="page-item">
-                <a class="page-link order-first btn" @onclick="@(()=>PagerButtonClicked(Model.PageCount))"><span style="font-size:7pt">Last</span></a>
+                <a class="page-link last btn" @onclick="@(()=>PagerButtonClicked(Model.PageCount))"><span style="font-size:7pt">Last</span></a>
             </li>
         }
         else
         {
             <li class="page-item">
-                <a class="page-link order-first btn disable"><span style="font-size:7pt">Last</span></a>
+                <a class="page-link last btn disable"><span style="font-size:7pt">Last</span></a>
             </li>
         }
 
