@@ -23,5 +23,11 @@ namespace ArticleApp.Models.Articles
 
         [Required(ErrorMessage = "Please Enter the Content, It should not be empty!!")]
         public string Content { get; set; }
+
+
+        /// <summary>
+        /// goji gul
+        /// </summary>
+        public bool IsPinned { get; set; } = false;
     }
 }

@@ -1,6 +1,156 @@
 ﻿
+@page "/Articles/Manage"
+
+@using ArticleApp.Models
+@using ArticleApp.Data
+@using ArticleApp.Models.Articles;
+@inject IArticleRepository ArticleRepository
+
+@using Dul.Domain.Common;
+@using Dul.Web;
+@using ArticleApp.Pages.Articles.Components
+
+@inject IJSRuntime JSRuntime
+
 <h3>Manage</h3>
 
-@code {
+<div>
+    <a href="/Articles/Create" class="btn btn-primary">Create</a>
+</div>
 
+@if (articles == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                @*<th>Content</th>*@
+                <th>Created</th>
+                <th>IsPinned</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var article in articles)
+            {
+                <tr>
+                    <td>@article.Id</td>
+                    <td>@article.Title</td>
+                    @*<td>@article.Content</td>*@
+                    <td>@article.Created.ToShortTimeString()</td>
+                    <td>@(article.IsPinned?"Pinned":"")</td>
+                    <td>
+                        <a href="/Articles/Details/@article.Id" class="btn btn-light">Details</a>
+                        <a href="/Articles/Edit/@article.Id" class="btn btn-light">Edit</a>
+                        <a href="/Articles/Delete/@article.Id" class="btn btn-light">Delete</a>
+                    </td>
+                    <td>
+                        <input type="button" value="Upload Notice" @onclick="@(()=>PinnedBy(article))" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+<ArticlePager Model="pager" PageIndexChanged="PageIndexChanged">
+
+</ArticlePager>
+
+@*@pager.PageCount
+@pager.PageNumber
+@pager.PageIndex*@
+
+@*//Bootstrap 4 modal*@
+
+@if(IsShow)
+{    
+    <div class="modal fade show " tabindex="-1" role="dialog" style="display:block;">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Upload Notice</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="btnClose_Click">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <p>@(_article.Id) set Notice?</p>
+          </div>
+          <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="btnTogglePinned_Click">Save changes</button>
+            <button type="button" class="btn btn-secondary" @onclick="btnClose_Click">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+}
+
+@code {
+    private Article _article = new Article();
+    private bool IsShow = false;
+    private void PinnedBy(Article article)
+    {
+        _article = article;
+        IsShow = true;
+        //JSRuntime.InvokeAsync<Object>("Alert", $"{_article.Id} Notice??");
+    }
+
+    private void btnClose_Click()
+    {
+        IsShow = false;
+        _article = new Article();
+    }
+
+    private async void btnTogglePinned_Click()
+    {
+        _article.IsPinned = !_article.IsPinned;
+        await ArticleRepository.EditArticleAsync(_article);
+        IsShow = false;  // Modal close
+
+        PagingResult<Article> PagingData = await ArticleRepository.GetAllAsync(pager.PageIndex, pager.PageSize);
+        pager.RecordCount = PagingData.TotalRecords;
+        articles = PagingData.Records.ToList();
+
+        StateHasChanged();  // Refresh
+    }
+    // Pager basic value
+    private PagerBase pager = new PagerBase()
+        {
+            PageNumber = 1,
+            PageIndex = 0,
+            PageSize = 3,
+            PagerButtonCount = 3
+        };
+    private List<Article> articles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //[1]display all data
+        //articles = await ArticleRepository.GetArticlesAsync();
+
+        //[2] display paging data
+        PagingResult<Article> PagingData = await ArticleRepository.GetAllAsync(pager.PageIndex, pager.PageSize);
+        pager.RecordCount = PagingData.TotalRecords;
+        articles = PagingData.Records.ToList();
+    }
+
+    // Page buttton Click Callback
+    private async void PageIndexChanged(int pageIndex)
+    {
+        pager.PageIndex = pageIndex;
+        pager.PageNumber = pageIndex + 1;
+
+        var PagingData = await ArticleRepository.GetAllAsync(pager.PageIndex, pager.PageSize);
+        pager.RecordCount = PagingData.TotalRecords;
+        articles = PagingData.Records.ToList();
+
+        StateHasChanged();
+    }
 }

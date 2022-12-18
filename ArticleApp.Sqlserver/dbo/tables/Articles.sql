@@ -7,6 +7,8 @@ CREATE TABLE [dbo].[Articles]
 
 	[Content] NVarchar(MAX) NOT NULL,
 
+	[IsPinned] Bit Null Default(0),
+
 --- Auditable.cs 참조
 	[CreatedBy] NVarchar(255) Null,			--- 등록자
 	[Created] DateTime Default(GetDate()),				--- 등록일
