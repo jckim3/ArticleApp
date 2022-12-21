@@ -16,6 +16,8 @@
 
 <div>
     <a href="/Articles/Create" class="btn btn-primary">Create</a>
+    <input type="button" value="Create(Modal)" class="btn btn-primary" data-toggle="modal"
+           data-target="#articleEditorForm" @onclick="btnCreate_Click" />
 </div>
 
 
@@ -35,6 +37,7 @@ else
                 <th>IsPinned</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
+                <th>Edit</th>
                 <th>Delete</th>
             </tr>
         </thead>
@@ -56,8 +59,12 @@ else
                         <input type="button" value="Upload Notice" @onclick="@(()=>PinnedBy(article))" />
                     </td>
                     <td>
-                        <input type="button" value="Delete" class="btn btn-danger" data-toggle="modal" 
-                        data-target="#articleDeleteDialog" @onclick="@(()=>DeletedBy(article))" />
+                        <input type="button" value="Edit" class="btn btn-danger" data-toggle="modal" 
+                        data-target="#articleEditorForm" @onclick="@(()=>EditedBy(article))" />
+                    </td>
+                    <td>
+                        <input type="button" value="Delete" class="btn btn-danger" data-toggle="modal"
+                       data-target="#articleDeleteDialog" @onclick="@(()=>DeletedBy(article))" />
                     </td>
                 </tr>
             }
@@ -72,6 +79,11 @@ else
 <ArticleDeleteDialog OnClick="btnDelete_Click">
 
 </ArticleDeleteDialog>
+
+<ArticleEditorForm Model="@_article" SaveOrUpdate="SaveOrUpdate">
+    <EditorFormTitle>@editorFormTitle</EditorFormTitle>
+
+</ArticleEditorForm>
 
 
 @*@pager.PageCount
@@ -104,8 +116,27 @@ else
 }
 
 @code {
+    private string editorFormTitle = "";
     private Article _article = new Article();
     private bool IsShow = false;
+    private void btnCreate_Click()
+    {
+        editorFormTitle = "Create";
+        _article = new Article();
+    }
+    private async void SaveOrUpdate()
+    {
+        var pagingData = await ArticleRepository.GetAllAsync(pager.PageIndex, pager.PageSize);
+        pager.RecordCount = pagingData.TotalRecords;
+        articles = pagingData.Records.ToList();
+
+        StateHasChanged();
+    }
+    private void EditedBy(Article article)
+    {
+        editorFormTitle = "Modify";
+        _article = article;
+    }
     private async void btnDelete_Click()
     {
         await ArticleRepository.DeleteArticleAsync(_article.Id);
@@ -124,6 +155,7 @@ else
     {
         _article = article;
     }
+
     private void PinnedBy(Article article)
     {
         _article = article;
