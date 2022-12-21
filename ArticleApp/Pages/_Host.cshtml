@@ -6,3 +6,14 @@
 }
 
 <component type="typeof(App)" render-mode="ServerPrerendered" />
+<script src="/lib/jquery.js"></script>
+<script src="/lib/dist/js/bootstrap.js"></script>
+<script>
+    function CloseModal(modalId){
+        $("#" + modalId).modal("hide");
+    }
+
+    function ShowModal(modalId){
+        $("#" + modalId).modal("show");
+    }
+</script>
