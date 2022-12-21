@@ -19,7 +19,8 @@
             <div class="form-group">
                 <label for="Content">Content: </label>
                 <hr />
-                @Model.Content
+                @*@Model.Content*@
+                @((MarkupString)lblContext)
             </div>
             <div class="form-group">
                 <a href="/Articles/Edit/@Model.Id" class="btn btn-primary"> Edit </a>
@@ -33,11 +34,14 @@
 @code {
     [Parameter]
     public int Id { get; set; }
+    private string lblContext = "";
 
     public Article Model { get; set; } = new Article();
 
     protected override async Task OnInitializedAsync()
     {
         Model = await ArticleRepository.GetArticleByIdAsync(Id);
+        //lblContext = Model.Content.Replace("\n", "<br />");
+        lblContext = Dul.HtmlUtility.EncodeWithTabAndSpace(Model.Content);
     }
 }

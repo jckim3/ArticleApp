@@ -21,9 +21,10 @@
 
                 <div class="form-group">
                     <label for="Content">Title</label>
-                    <InputTextArea id="Content" class="form-control" placeholder="Enter Content" @bind-Value="@Model.Content"></InputTextArea>
+                    <InputTextArea id="Content" class="form-control" placeholder="Enter Content" @bind-Value="@Model.Content" rows="5"></InputTextArea>
                     <ValidationMessage For="@(()=>Model.Content)" class="form-text text-muted"></ValidationMessage>
                 </div>
+                <h1></h1>
                 <button type="submit" class="btn btn-primary">Submit</button>
                 <a href="/Articles" class="btn btn-secondary"> List </a>
             </EditForm>
